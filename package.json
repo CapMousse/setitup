@@ -1,0 +1,19 @@
+{
+    "name": "setitup",
+    "version": "0.0.1",
+    "description": "A tool to rapidly setup a project",
+    "preferGlobal": "true",
+    "main": "index.js",
+    "bin": { "setitup": "bin/setitup" },
+    "author": "Jérémy Barbe",
+    "keywords": ["setup", "project"],
+    "repository" : {
+        "type": "git",
+        "url": "https://hacksparrow@github.com/hacksparrow/flv2mp3.git"
+    },
+    "dependencies": {
+        "commander": "~1.1.1",
+        "toml": "~0.4.1"
+    },
+    "engines": { "node": "*" }
+}
