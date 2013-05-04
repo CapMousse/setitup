@@ -10,7 +10,7 @@ module.exports = {
             ticks[name]++ || (ticks[name] = 1);
             callback.apply(this, arguments);
 
-            if (ticks[name] == queues[name]) {
+            if (ticks[name] == queues[name] && doneCallback[name]) {
                 doneCallback[name].call(this);
             }
         }
