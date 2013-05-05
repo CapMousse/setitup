@@ -37,18 +37,6 @@ function checkGit(git){
     }));
 }
 
-function checkOutput(output){
-    if (typeof output != "string") {
-        return;
-    }
-
-    if (fs.existsSync(currentDir + "/" + output) === false) {
-        console.log(colors.green + "-->" + colors.white + " Creating dir for git repository " + colors.reset);
-        fs.mkdirSync(currentDir + "/" + output);
-        currentDir  = currentDir + "/" + output;
-    }
-}
-
 function checkoutGit(git, callback){
     console.log(colors.green + "-->" + colors.white + " Checking out git repository " + colors.reset);
 
@@ -60,6 +48,18 @@ function checkoutGit(git, callback){
             callback();
         }
     });
+}
+
+function checkOutput(output){
+    if (typeof output != "string") {
+        return;
+    }
+
+    if (fs.existsSync(currentDir + "/" + output) === false) {
+        console.log(colors.green + "-->" + colors.white + " Creating dir for git repository " + colors.reset);
+        fs.mkdirSync(currentDir + "/" + output);
+        currentDir  = currentDir + "/" + output;
+    }
 }
 
 function runInstall(){

@@ -15,8 +15,8 @@ function checkoutBranch(branch){
 
         exec('git pull origin ' + branch, queue.add('project', function(error, stdout, stderr){
             if (error) {
-                console.log(colors.red + "\tError while pulling branch" + colors.reset);
-                console.log(stderr);
+                console.log(colors.red + "\tError while pulling branch :" + colors.reset);
+                console.log("\t" + stderr.replace("\n", "\n\t"));
             }            
         }));
     }));
