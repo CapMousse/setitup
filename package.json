@@ -1,19 +1,21 @@
 {
     "name": "setitup",
     "version": "0.0.1",
-    "description": "A tool to rapidly setup a project",
+    "description": "local environment project setup",
     "preferGlobal": "true",
-    "main": "index.js",
     "bin": { "setitup": "bin/setitup" },
-    "author": "Jérémy Barbe",
+    "license" : "WTFPL",
+    "author": "Jérémy Barbe <jeremy@devenezninja.com> (https://twitter.com/capitainemousse)",
     "keywords": ["setup", "project"],
     "repository" : {
         "type": "git",
         "url": "https://hacksparrow@github.com/hacksparrow/flv2mp3.git"
     },
+    "bugs": {
+        "url" : "https://github.com/CapMousse/setitup/issues"
+    },
     "dependencies": {
         "commander": "~1.1.1",
         "js-yaml": "~2.0.5"
-    },
-    "engines": { "node": "*" }
+    }
 }
