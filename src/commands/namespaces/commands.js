@@ -13,11 +13,7 @@ module.exports = function(commands, rootDir, next){
             }
         };
 
-    if (void(0) === commands.run) {
-        return next();
-    }
-
-    for(len = commands.run.length; loop < len; loop++){
+    for(len = commands.length; loop < len; loop++){
         callQueue.push([function(command, tick){
             console.log(colors.green + "\tRuning "+command);
             exec(command, function(err, stdout, stderr){
@@ -27,7 +23,7 @@ module.exports = function(commands, rootDir, next){
 
                 tick();
             });
-        }, commands.run[loop], tick]);
+        }, commands[loop], tick]);
     }
 
     callQueue.push([next, undefined, undefined]);

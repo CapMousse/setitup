@@ -1,7 +1,7 @@
 'use strict';
 
 var fs = require('fs');
-var toml = require('toml');
+var yaml = require('js-yaml');
 var exec = require('child_process').exec;
 var queue = require('../utils/queue');
 var colors = require('../utils/consoleColors');
@@ -20,7 +20,7 @@ function checkConfig(){
 function getConfig(){
     var configContent = fs.readFileSync(currentDir+'/setitup.config');
 
-    return toml.parse(configContent);
+    return yaml.load(configContent.toString());
 }
 
 function checkGit(git){
