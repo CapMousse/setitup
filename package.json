@@ -1,6 +1,6 @@
 {
     "name": "setitup",
-    "version": "0.0.1",
+    "version": "0.1",
     "description": "local environment project setup",
     "preferGlobal": "true",
     "bin": { "setitup": "bin/setitup" },
