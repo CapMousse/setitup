@@ -19,11 +19,11 @@ project:
     root :    "root/dir"
 
 database:
-   driver :  "mysql"
-   name :    "database name"
+    driver :  "mysql"
+    name :    "database name"
     charset : "used charset (optional)"
     user :    "databse user"
-    password :"databse password"
+    password: "databse password"
 
 gem:
     sass :

@@ -21,7 +21,7 @@ module.exports = function(){
             "    name :    \"database name\"\r\n" +
             "    charset : \"used charset (optional)\"\r\n" +
             "    user :    \"databse user\"\r\n" +
-            "    password :\"databse password\"\r\n" +
+            "    password: \"databse password\"\r\n" +
             "\r\n" +
             "gem:\r\n" +
             "    sass :\r\n" +
