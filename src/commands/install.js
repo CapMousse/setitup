@@ -63,7 +63,7 @@ function checkoutGit(git, callback){
 }
 
 function runInstall(){
-    var config, namespace, customNamespaces;
+    var config, namespace, customNamespaces, callQueue = [], iterator = -1, next;
 
     if (checkConfig() === false) {
         return
@@ -75,6 +75,13 @@ function runInstall(){
         customNamespaces = require(currentDir + "/setitup.js");
     }
 
+    next = function(){
+        if (iterator < callQueue.length - 1) {
+            iterator++;
+            callQueue[iterator][0](callQueue[iterator][1], callQueue[iterator][2]);
+        }
+    }
+
     for (namespace in config) {
         if (namespaces[namespace] == void(0) && customNamespaces[namespace] == void(0)) {
             console.log(colors.white + "Namespace "+ colors.red + namespace + colors.white +" doesn't exists" + colors.reset );
@@ -82,15 +89,21 @@ function runInstall(){
         }
 
         if (namespaces[namespace]) {
-            console.log(colors.green + "-->" + colors.white + " Processing " + namespace + colors.reset)
-            namespaces[namespace](config[namespace], currentDir);
+            callQueue.push([function(namespace, config){
+                console.log(colors.green + "-->" + colors.white + " Processing " + namespace + colors.reset);
+                namespaces[namespace](config, currentDir, next);
+            }, namespace, config[namespace]]);
         }
 
         if (customNamespaces[namespace]) {
-            console.log(colors.green + "-->" + colors.white + " Processing custom " + namespace + colors.reset)
-            customNamespaces[namespace](config[namespace], currentDir);
+            callQueue.push([function(namespace, config){
+                console.log(colors.green + "-->" + colors.white + " Processing custom " + namespace + colors.reset);
+                customNamespaces[namespace](config, currentDir, next);
+            }, namespace, config[namespace]]);
         }
     }
+
+    next();
 }
 
 module.exports = function(git, output){

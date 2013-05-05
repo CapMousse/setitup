@@ -1,5 +1,5 @@
 'use strict';
 
-module.exports = function(commands){
-	console.log(commands);
-}
+module.exports = function(commands, rootDir, next){
+	next();
+};

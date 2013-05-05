@@ -30,6 +30,7 @@ function createVhost(host, port, root){
     if (fs.existsSync("/etc/apache2/extra") && fs.existsSync("/etc/apache2/extra/httpd-vhosts.conf")) {
         try{
             fs.appendFileSync("/etc/apache2/extra/httpd-vhosts.conf", "\n" + vhost);
+            console.log(colors.green + "\tYou can restart apache to enable your new virtual host" + colors.reset);
         } catch (error) {
             console.log(colors.red + "\tError while writing virtual host, try using sudo" + colors.reset);
         }
@@ -37,6 +38,11 @@ function createVhost(host, port, root){
     }
 
     if (fs.existsSync("/etc/apache2/sites-available/")) {
+        fs.writeFileSync("/etc/apache2/sites-available/" + host + ".conf", vhost);
+
+        exec("ln -s /etc/apache2/sites-available/" + host + ".conf /etc/apache2/sites-enabled/" + host + ".conf", queue.add('project', function(error, stdout, stderr){
+            console.log(colors.green + "\tYou can restart apache to enable your new virtual host" + colors.reset);
+        }));
 
         return;
     }
@@ -44,7 +50,7 @@ function createVhost(host, port, root){
     console.log(colors.red + "\t No virtual host file found " + colors.reset);
 }
 
-module.exports = function(args, rootDir){
+module.exports = function(args, rootDir, next){
 
     if (args.branch) {
         queue.add('project', checkoutBranch)(args.branch);
@@ -53,5 +59,6 @@ module.exports = function(args, rootDir){
     if (args.host) {
         queue.add('project', createVhost)(args.host, args.port || 80, rootDir + '/' + (args.root || ''));
     }
-    
+
+    queue.done('project', next);
 }
