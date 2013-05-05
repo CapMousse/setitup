@@ -10,41 +10,54 @@ Simply run `npm install setitup -g`
 
 ## How to use
 
-You can create a file named `setitup.config` file (user `TOML`) in your project folder, or run `setitup init` to create the file, and define dependencies like this:
+You can create a file named `setitup.config` file (using `YAML`) in your project folder, or run `setitup init` to create a default config file :
 
-	[project]
-	git = 		"git@github.com:CapMousse/projectsetupmanager.git"
-	branch = 	"master"
-	host = 		"dev.psm.com"
-		
-	[database]
-	type = 		"mysql"
-	name =		"test"
-	user =		"root"
-	password = 	"azerty"
-		
-	[gem]
-	sass = 		"--pre"
-	compass = 	true
-		
-	[npm]
-	coffee-script = ">1.1 && <1.1"
-	bower = 		true
-	requirejs = 	true
-	brunch = 		true
-	
-	[commands]
-	before =	["php composer.phar install --dev"]
-	after = 	["php app/console assets:install, "php app/console cache:clear"]
+```yaml
+project:
+    branch :  "master"
+    host :    "your.host"
+    root :    "root/dir"
 
-		
-If a `setitup.config` file is defined, you can lauch `setitup doctor` to detect if your current env is ready to run your project !
+database:
+   driver :  "mysql"
+   name :    "database name"
+    charset : "used charset (optional)"
+    user :    "databse user"
+    password :"databse password"
 
-If not, run `setitup install` to automaticaly setup your env ! You can even use `setitup install git@github.com:CapMousse/projectsetupmanager.git` to automaticaly get your project and launch instal !
+gem:
+    sass :
+    compass :
+    susy :    "1.0.8"
 
-To check if your install is always on lastest version of dependencies, you can run `setitup update`
+npm:
+    coffee-script : "~1.6.2"
+    bower :
+
+commands:
+    - "php composer.phar install --dev"
+    - "php app/console assets:install"
+    - "php app/console cache:clear"
+```
+
+Then run `setitup install` to automaticaly setup your env. You can even use `setitup install -g git@github.com:CapMousse/setitup.git -o a/ouput/dir` to automaticaly get your project and launch install.
 
 ## Create custom namespaces
 
-If you want to add your custom namespace to add custom commands and tools, simple create a setitup.js on your directory.
+If you want to add your custom namespace, to add custom commands and tools, or if you want to overload existing namespace, simply create a setitup.js on your directory.
+
+```javascript
+'use strict';
+
+module.exports = {
+    /**
+     * {Object|Array} commands the list of commands of the current namespace
+     * {String}       rootDir  the root dir of the project
+     * {Function}     a callback to call when namespace work is finished
+     */
+    namespaceName: function(commands, rootDir, next) {
+        next();
+    }
+}
+```
 
