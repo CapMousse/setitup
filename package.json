@@ -9,7 +9,7 @@
     "keywords": ["setup", "project"],
     "repository" : {
         "type": "git",
-        "url": "https://hacksparrow@github.com/hacksparrow/flv2mp3.git"
+        "url": "https://github.com/CapMousse/setitup.git"
     },
     "bugs": {
         "url" : "https://github.com/CapMousse/setitup/issues"
