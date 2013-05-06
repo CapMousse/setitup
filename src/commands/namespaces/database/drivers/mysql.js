@@ -6,9 +6,7 @@ var colors = require('../../../../utils/consoleColors');
 module.exports = function(end, name, charset, user, password){
     var command = "mysql";
 
-    if (user != void(0)) {
-        command += " -u" + user;
-    }
+    command += " -u" + (user || 'root');
 
     if (password != void(0)) {
         command += " -p" + password;
@@ -20,7 +18,7 @@ module.exports = function(end, name, charset, user, password){
     exec(command, function(err, stdout, stderr) {
         if (err) {
             console.log(colors.red + "\tError while creating database" + colors.reset);
-            console.log(err);
+            console.log("\t"+stderr);
         }
 
         end();
