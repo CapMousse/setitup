@@ -1,12 +1,13 @@
 {
     "name": "setitup",
     "version": "0.0.2",
-    "description": "local environment project setup",
-    "preferGlobal": "true",
-    "bin": { "setitup": "bin/setitup" },
+    "description": "Local environment project setup made easy",
+    "keywords": [
+        "setup", 
+        "project"
+    ],
     "license" : "WTFPL",
     "author": "Jérémy Barbe <jeremy@devenezninja.com> (https://twitter.com/capitainemousse)",
-    "keywords": ["setup", "project"],
     "repository" : {
         "type": "git",
         "url": "https://github.com/CapMousse/setitup.git"
@@ -14,8 +15,20 @@
     "bugs": {
         "url" : "https://github.com/CapMousse/setitup/issues"
     },
+    "scripts": {
+        "test": "mocha test/*.js"
+    },
+    "preferGlobal": "true",
+    "bin": { 
+        "setitup": "bin/setitup" 
+    },
+    "main": "src/cli.js",
     "dependencies": {
         "commander": "~1.1.1",
         "js-yaml": "~2.0.5"
+    },
+    "devDependencies": {
+        "mocha": "",
+        "should": ""
     }
 }
