@@ -1,8 +1,12 @@
 # Setitup
 
-## What is that ?
+Local environment project setup made easy.
 
-**Setitup** is a tool to rapidly setup a project on your dev/prod env. Don't waste time to install each package, to install dependencies or to create your database, **Setitup** will do it for you !
+**Setitup** is an automated tool to rapidly setup a project on a new developement environment. Don't waste time to install each package, to install dependencies or to create your database, **Setitup** will do it for you !.
+
+SetItUp can be easily customise to add your custom namespace and add custom commands.
+
+**Now in beta, feedbacks are welcomed**
 
 ## How to install
 
@@ -10,21 +14,54 @@ Simply run `npm install setitup -g`
 
 ## How to use
 
-You can create a file named `setitup.config` file (using `YAML`) in your project folder, or run `setitup init` to create a default config file :
+### Create a config file
+
+To start, you need to create a config file, named `setitup.config` (using `YAML`), in your project folder. You can use `setitup init` to create a default file for you or create it manually.
+
+This file contains several namespaces, each one assigned for one part of your setup:
+
+- project : your basic project configuration
+- database : your database configuration
+- gem : needed gems
+- npm : needed node packages
+- commands : custom commands to launch
+
+**All namespaces are optional.**
+
+
+#### Project
+The project namespace contains basic informations for your setup : 
+- branch : the branch to use
+- host : the virtual host to create
+- root : the root dir for the virtual host
+
 
 ```yaml
 project:
     branch :  "master"
     host :    "your.host"
-    root :    "root/dir"
+    root :    "root/dir "
+```
 
+#### Database
+The database namespace contains all information needed to setup your database:
+- driver : the driver to use (for now, only MySQL)
+- name : the database name
+- charset : the database charset (optional)
+- user : the user to create database (optional)
+- password : the user password to create database (optional)
+
+```yaml
 database:
     driver :  "mysql"
     name :    "database name"
-    charset : "used charset (optional)"
-    user :    "databse user"
-    password: "databse password"
+    charset : "utf8"
+```
 
+#### Gem & Npm
+The gem and npm namespaces will automaticaly install all listed package with version
+
+```yaml
 gem:
     sass :
     compass :
@@ -33,14 +70,23 @@ gem:
 npm:
     coffee-script : "~1.6.2"
     bower :
+```
 
+#### Commands
+The commands namespace will run a set of custom commands when needed. 
+
+```yaml
 commands:
     - "php composer.phar install --dev"
     - "php app/console assets:install"
     - "php app/console cache:clear"
 ```
 
-Then run `setitup install` to automaticaly setup your env. You can even use `setitup install -g git@github.com:CapMousse/setitup.git -o a/ouput/dir` to automaticaly get your project and launch install.
+### Setup environment
+
+Now that your project has a `setitup.config`, you can run `setitup install` to launch installation.
+
+If you don't have clone your git repository to your computer, you can use  `setitup install -g repos_url_here`. You can even set a custom ouput dir for git cone, using `-o`: `setitup install -g repos_url_here -o a/ouput/dir`.
 
 ## Create custom namespaces
 
@@ -59,5 +105,23 @@ module.exports = {
         next();
     }
 }
+```
+
+## License
+
+```
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+Version 2, December 2004
+
+Copyright (C) 2013 Jérémy Barbe <jeremy@devenezninja.com>
+
+Everyone is permitted to copy and distribute verbatim or modified
+copies of this license document, and changing it is allowed as long
+as the name is changed.
+
+DO WHAT THE FUCK YOU WANT TO PUBLIC LICENSE
+TERMS AND CONDITIONS FOR COPYING, DISTRIBUTION AND MODIFICATION
+
+0. You just DO WHAT THE FUCK YOU WANT TO.
 ```
 
