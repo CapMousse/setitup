@@ -2,11 +2,11 @@
 
 Local environment project setup made easy.
 
-**Setitup** is an automated tool to rapidly setup a project on a new developement environment. Don't waste time to install each package, to install dependencies or to create your database, **Setitup** will do it for you !.
+**SetItUp** is an automated tool to rapidly setup a project on a new developement environment. Don't waste time to install each package, to install dependencies or to create your database, **SetItUp** will do it for you !.
 
-SetItUp can be easily customise to add your custom namespace and add custom commands.
+SetItUp can be easily customised to add your custom namespace and add custom commands.
 
-**Now in beta, feedbacks are welcomed**
+**Now in beta, feedback is welcome**
 
 ## How to install
 
@@ -18,7 +18,7 @@ Simply run `npm install setitup -g`
 
 To start, you need to create a config file, named `setitup.config` (using `YAML`), in your project folder. You can use `setitup init` to create a default file for you or create it manually.
 
-This file contains several namespaces, each one assigned for one part of your setup:
+This file contains several namespaces, each one assigned to one part of your setup:
 
 - project : your basic project configuration
 - database : your database configuration
@@ -30,7 +30,7 @@ This file contains several namespaces, each one assigned for one part of your se
 
 
 #### Project
-The project namespace contains basic informations for your setup : 
+The project namespace contains basic information for your setup: 
 - branch : the branch to use
 - host : the virtual host to create
 - root : the root dir for the virtual host
@@ -59,7 +59,7 @@ database:
 ```
 
 #### Gem & Npm
-The gem and npm namespaces will automaticaly install all listed package with version
+The gem and npm namespaces will automaticaly install all listed packages with the given version
 
 ```yaml
 gem:
@@ -86,11 +86,11 @@ commands:
 
 Now that your project has a `setitup.config`, you can run `setitup install` to launch installation.
 
-If you don't have clone your git repository to your computer, you can use  `setitup install -g repos_url_here`. You can even set a custom ouput dir for git cone, using `-o`: `setitup install -g repos_url_here -o a/ouput/dir`.
+If you don't have clone your git repository to your computer, you can use `setitup install -g repos_url_here`. You can even set a custom ouput dir for git clone, using `-o`: `setitup install -g repos_url_here -o a/ouput/dir`.
 
 ## Create custom namespaces
 
-If you want to add your custom namespace, to add custom commands and tools, or if you want to overload existing namespace, simply create a setitup.js on your directory.
+If you want to add a custom namespace, to add custom commands and tools, or if you want to override an existing namespace, simply create a setitup.js on your directory.
 
 ```javascript
 'use strict';
