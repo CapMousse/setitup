@@ -88,6 +88,8 @@ Now that your project has a `setitup.config`, you can run `setitup install` to l
 
 If you don't have clone your git repository to your computer, you can use `setitup install -g repos_url_here`. You can even set a custom ouput dir for git clone, using `-o`: `setitup install -g repos_url_here -o a/ouput/dir`.
 
+If you wan't to install a specific namespace, you can use `setitup install -n namespace`.
+
 ## Create custom namespaces
 
 If you want to add a custom namespace, to add custom commands and tools, or if you want to override an existing namespace, simply create a setitup.js on your directory.
