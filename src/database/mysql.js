@@ -1,14 +1,14 @@
 'use strict';
 
 var exec = require('child_process').exec;
-var colors = require('../../../../utils/consoleColors');
+var colors = require('../utils/consoleColors');
 
 module.exports = function(end, name, charset, user, password){
     var command = "mysql";
 
     command += " -u" + (user || 'root');
 
-    if (password != void(0)) {
+    if (password !== void(0)) {
         command += " -p" + password;
     }
 

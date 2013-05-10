@@ -1,12 +1,17 @@
 {
     "name": "setitup",
-    "version": "0.0.4",
+    "version": "0.0.5",
     "description": "Local environment project setup made easy",
     "keywords": [
         "setup", 
         "project"
     ],
-    "license" : "WTFPL",
+    "licenses" : [
+        {
+            "type": "WTFPL",
+            "url": "https://github.com/CapMousse/Clifier/blob/master/LICENSE"
+        }
+    ],
     "author": "Jérémy Barbe <jeremy@devenezninja.com> (https://twitter.com/capitainemousse)",
     "repository" : {
         "type": "git",
@@ -16,7 +21,7 @@
         "url" : "https://github.com/CapMousse/setitup/issues"
     },
     "scripts": {
-        "test": "mocha test/*.js"
+        "test": "grunt nodeunit"
     },
     "preferGlobal": "true",
     "bin": { 
@@ -24,11 +29,13 @@
     },
     "main": "src/cli.js",
     "dependencies": {
-        "commander": "~1.1.1",
+        "clifier": ">=0.0.1",
         "js-yaml": "~2.0.5"
     },
     "devDependencies": {
-        "mocha": "",
-        "should": ""
+        "grunt-contrib-jshint": "~0.1.1",
+        "grunt-contrib-nodeunit": "~0.1.2",
+        "grunt-contrib-watch": "~0.2.0",
+        "grunt": "~0.4.1"
     }
 }

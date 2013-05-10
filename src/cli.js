@@ -1,38 +1,16 @@
 'use strict';
 
-var program = require('commander');
+var Clifier = require('clifier');
+var pack = require('../package.json');
 var commands = require('./commands');
 
-program.version(require('../package.json').version);
+var cli = new Clifier('setitup', pack.version, pack.description);
 
-program
-    .command('init')
-    .description('Create a new setitup.config file on your project directory')
-    .action(commands.init);
+cli.addCommand('init', 'Create a new setitup.config file on your project directory', commands.init);
 
-program
-    .command('install')
-    .description('Install a setitup project')
-    .option('-g', 'a git url to install')
-    .option('-o', 'output for git install')
-    .action(commands.install);
+cli.addCommand('install', 'Install a setitup project', commands.install)
+    .addArgument('-g, --git', 'a git url to install')
+    .addArgument('-o, --output', 'output for git install')
+    .addArgument('-n, --namespace', 'install the asked namespace');
 
-program
-    .command('doctor')
-    .description('Check if the current project can run on your environment')
-    .action(commands.doctor);
-
-program
-    .command('update')
-    .description('Update dependencies to their lastest versions')
-    .action(commands.update);
-
-exports.run = function(){
-    var args = process.argv.slice();
-
-    if (args[2] == void(0)) {
-        program.help();
-    } else {
-        program.parse(args);
-    }
-};
+cli.run();

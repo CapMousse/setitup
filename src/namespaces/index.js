@@ -6,4 +6,4 @@ module.exports = {
     gem:        require('./gem'),
     npm:        require('./npm'),
     commands:   require('./commands')
-}
+};

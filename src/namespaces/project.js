@@ -2,8 +2,8 @@
 
 var fs = require('fs');
 var exec = require('child_process').exec;
-var queue = require('../../utils/queue');
-var colors = require('../../utils/consoleColors');
+var queue = require('../utils/queue');
+var colors = require('../utils/consoleColors');
 
 function checkoutBranch(branch){
     console.log(colors.green + "\tChecking out branch " + colors.white + branch + colors.reset);
@@ -25,7 +25,7 @@ function checkoutBranch(branch){
 }
 
 function createVhost(host, port, root){
-    var vhost = "<VirtualHost *:" + port + ">\n\tServerName " + host + "\n\tDocumentRoot \"" + root + "\"\n</VirtualHost>", content, error
+    var vhost = "<VirtualHost *:" + port + ">\n\tServerName " + host + "\n\tDocumentRoot \"" + root + "\"\n</VirtualHost>", content;
 
     console.log(colors.green + "\tWriting virtual host" + colors.reset);
 
@@ -55,7 +55,7 @@ function createVhost(host, port, root){
 
         fs.writeFileSync("/etc/apache2/sites-available/" + host + ".conf", vhost);
 
-        exec("ln -s /etc/apache2/sites-available/" + host + ".conf /etc/apache2/sites-enabled/" + host + ".conf", queue.add('project', function(error, stdout, stderr){
+        exec("ln -s /etc/apache2/sites-available/" + host + ".conf /etc/apache2/sites-enabled/" + host + ".conf", queue.add('project', function(){
             console.log(colors.green + "\tYou can restart apache to enable your new virtual host" + colors.reset);
         }));
 
@@ -76,4 +76,4 @@ module.exports = function(args, rootDir, next){
     }
 
     queue.done('project', next);
-}
+};

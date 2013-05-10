@@ -5,7 +5,7 @@ var yaml = require('js-yaml');
 var exec = require('child_process').exec;
 var queue = require('../utils/queue');
 var colors = require('../utils/consoleColors');
-var namespaces = require('./namespaces');
+var namespaces = require('../namespaces');
 var currentDir = process.cwd();
 
 function checkConfig(){
@@ -24,12 +24,12 @@ function getConfig(){
 }
 
 function checkGit(git){
-    if (typeof git != 'string'){
+    if (typeof git !== 'string') {
         return;
     }
 
     console.log(colors.green + "-->" + colors.white + " Checking if git repository exists " + colors.reset);
-    exec('git ls-remote '+git, queue.add('install', function(error, stdout, stderr){
+    exec('git ls-remote '+git, queue.add('install', function(error){
         if (error) {
             console.log(colors.red + "The repository " + colors.white + git + colors.red + " doesn't exists" + colors.reset);
             process.exit();
@@ -51,7 +51,7 @@ function checkoutGit(git, callback){
 }
 
 function checkOutput(output){
-    if (typeof output != "string") {
+    if (typeof output !== "string") {
         return;
     }
 
@@ -62,11 +62,23 @@ function checkOutput(output){
     }
 }
 
-function runInstall(){
-    var config, namespace, customNamespaces, callQueue = [], iterator = -1, next;
+function runInstall(askedNamespace){
+    var iterator = -1,
+        callQueue = [],
+        next = function(){
+            if (iterator < callQueue.length - 1) {
+                iterator++;
+                callQueue[iterator][0](callQueue[iterator][1], callQueue[iterator][2], callQueue[iterator][3]);
+            }
+        },
+        callNamespace = function(namespace, config, custom) {
+            console.log(colors.green + "-->" + colors.white + " Processing " + (custom ? "custom " : "") + namespace + colors.reset);
+            namespaces[namespace](config, currentDir, next);
+        },
+        config, namespace, customNamespaces;
 
     if (checkConfig() === false) {
-        return
+        return;
     }
 
     config = getConfig();
@@ -75,46 +87,38 @@ function runInstall(){
         customNamespaces = require(currentDir + "/setitup.js");
     }
 
-    next = function(){
-        if (iterator < callQueue.length - 1) {
-            iterator++;
-            callQueue[iterator][0](callQueue[iterator][1], callQueue[iterator][2]);
-        }
-    }
-
     for (namespace in config) {
-        if (namespaces[namespace] == void(0) && customNamespaces[namespace] == void(0)) {
+        if (typeof askedNamespace === 'string' && namespace !== askedNamespace) {
+            continue;
+        }
+
+        if (namespaces[namespace] === void(0) && customNamespaces[namespace] === void(0)) {
             console.log(colors.white + "Namespace "+ colors.red + namespace + colors.white +" doesn't exists" + colors.reset );
             continue;
         }
 
         if (namespaces[namespace]) {
-            callQueue.push([function(namespace, config){
-                console.log(colors.green + "-->" + colors.white + " Processing " + namespace + colors.reset);
-                namespaces[namespace](config, currentDir, next);
-            }, namespace, config[namespace]]);
+            callQueue.push([callNamespace, namespace, config[namespace], false]);
         }
 
         if (customNamespaces[namespace]) {
-            callQueue.push([function(namespace, config){
-                console.log(colors.green + "-->" + colors.white + " Processing custom " + namespace + colors.reset);
-                customNamespaces[namespace](config, currentDir, next);
-            }, namespace, config[namespace]]);
+            callQueue.push([callNamespace, namespace, config[namespace], true]);
         }
     }
 
     next();
 }
 
-module.exports = function(git, output){
+module.exports = function(git, output, namespace) {
     queue.done('install', function(){
-        if (typeof git == 'string') {
+        if (typeof git === 'string') {
             checkoutGit(git, runInstall);
         } else {
-            runInstall();
+            runInstall(namespace);
         }
     });
 
     checkGit(git);
-    queue.add('install', checkOutput)(output);
+    queue.add('install', checkOutput)(output);   
+    
 };
