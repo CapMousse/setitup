@@ -3,21 +3,21 @@
 var exec = require('child_process').exec;
 var colors = require('../utils/consoleColors');
 
-module.exports = function(end, name, charset, user, password){
+module.exports = function(end, config){
     var command = "mysql";
 
-    command += " -u" + (user || 'root');
+    command += " -u" + (config.user || 'root');
 
-    if (password !== void(0)) {
-        command += " -p" + password;
+    if (config.password !== void(0)) {
+        command += " -p" + config.password;
     }
 
-    command += " -e 'CREATE DATABASE IF NOT EXISTS `" + name + "` CHARACTER SET = \"" + charset +"\"'";
-    console.log(colors.white + "\tCreating database " + colors.green + name + colors.reset);
+    command += " -e 'CREATE DATABASE IF NOT EXISTS `" + config.name + "` CHARACTER SET = \"" + (config.charset || 'UFT8') +"\"'";
+    console.log(colors.white + "    Creating database " + colors.green + config.name + colors.reset);
 
     exec(command, function(err, stdout, stderr) {
         if (err) {
-            console.log(colors.red + "\tError while creating database" + colors.reset);
+            console.log(colors.red + "    Error while creating database" + colors.reset);
             console.log("\t"+stderr);
         }
 

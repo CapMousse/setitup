@@ -10,9 +10,9 @@ module.exports = function(commands, rootDir, next){
     }
 
     if (drivers[commands.driver] === void(0)) {
-        console.log(colors.red + "\t Database driver " + colors.white + commands.driver + colors.red + " doen't exists" + colors.reset);
+        console.log(colors.red + "     Database driver " + colors.white + commands.driver + colors.red + " doen't exists" + colors.reset);
         return next();
     }
 
-    drivers[commands.driver](next, commands.name, commands.charset || 'utf8', commands.user, commands.password);
+    drivers[commands.driver](next, commands);
 };
