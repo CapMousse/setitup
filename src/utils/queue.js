@@ -25,7 +25,10 @@ module.exports = {
             }
 
             if (false === result) {
-                errorCallback[name].call(false);
+                if ( void(0) !== errorCallback[name]){
+                    errorCallback[name].call(false);   
+                }
+                
                 return false;
             }
 
