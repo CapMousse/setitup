@@ -8,14 +8,15 @@ module.exports = function(commands, rootDir, next){
         tick = function(){
             if (iterator < callQueue.length - 1) {
                 iterator++;
-                callQueue[iterator][0](callQueue[iterator][1], callQueue[iterator][2]);
+                callQueue[iterator].shift().apply(this, callQueue[iterator]);
             }
         },
         execCallback = function(command, tick){
-            console.log(colors.green + "\tRuning "+command);
-            exec(command, function(err){
-                if (void(0) !== err) {
-                    console.log(colors.red + "\tError while runing "+command);
+            console.log(colors.green + "    Runing "+command);
+            exec(command, function(err, stdout, stderr){
+                if (void(0) !== err && null !== err) {
+                    console.log(colors.red + "    Error while runing "+command);
+                    console.log("    " + stderr.replace("\n", "\n    "));
                 }
 
                 tick();
@@ -26,6 +27,6 @@ module.exports = function(commands, rootDir, next){
         callQueue.push([execCallback, commands[loop], tick]);
     }
 
-    callQueue.push([next, undefined, undefined]);
+    callQueue.push([next]);
     tick();
 };

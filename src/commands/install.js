@@ -74,7 +74,7 @@ function runInstall(askedNamespace, callback){
             console.log(colors.green + "-->" + colors.white + " Processing " + (custom ? "custom " : "") + namespace + colors.reset);
             namespaces[namespace](config, currentDir, next);
         },
-        config, namespace, customNamespaces;
+        config, namespace, customNamespaces = [];
 
     if (checkConfig() === false) {
         return;

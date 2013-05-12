@@ -7,9 +7,9 @@ var queue = require('../utils/queue');
 function installNpm(npm, version){
     exec('npm install ' + npm + (version ? '@\"' + version + '\"': ''), queue.add('npm', function(err){
         if (void(0) !== err){
-            console.log(colors.green + "\tNPM package " + npm + " installed");
+            console.log(colors.green + "    NPM package " + npm + " installed");
         } else {
-            console.log(colors.red + "\tError while installer package " + npm);
+            console.log(colors.red + "    Error while installer package " + npm);
         }
         
     }));
