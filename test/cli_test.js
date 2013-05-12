@@ -12,6 +12,7 @@ exports.testCommands = function(test) {
         log.push([].slice.call(arguments));
     };
 
+    process.argv = []; //empty argv to prevent argument from grunt to get to clifier
 
     cli.run();
     test.equal(log[0], '\nsetitup v0.0.6\nLocal environment project setup made easy\n\nUsage : setitup [command] [options]\n\nCommand list : \n    init                Create a new setitup.config file on your project directory\n    install [options]      Install a setitup project\n        -g, --git\ta git url to install\n        -o, --output\toutput for git install\n        -n, --namespace\tinstall the asked namespace\n    help                Show help for setitup\n');
