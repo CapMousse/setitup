@@ -10,7 +10,7 @@ var currentDir = process.cwd();
 
 function checkConfig(){
     if (fs.existsSync(currentDir+'/setitup.config') === false) {
-        console.log("The setitip.config file doesn't exist");
+        console.log("The setitup.config file doesn't exist");
         return false;
     }
 
@@ -29,7 +29,7 @@ function checkGit(git){
     }
 
     console.log(colors.green + "-->" + colors.white + " Checking if git repository exists " + colors.reset);
-    exec('git ls-remote '+git, queue.add('install', function(error){
+    exec('git ls-remote '+git, queue.add('checkConfig', function(error){
         if (error) {
             console.log(colors.red + "The repository " + colors.white + git + colors.red + " doesn't exists" + colors.reset);
             process.exit();
@@ -37,17 +37,16 @@ function checkGit(git){
     }));
 }
 
-function checkoutGit(git, callback){
+function checkoutGit(git){
     console.log(colors.green + "-->" + colors.white + " Checking out git repository " + colors.reset);
 
-    exec('git clone ' + git + ' ' + currentDir, function(error, stdout, stderr){
+    exec('git clone ' + git + ' ' + currentDir, queue.add('checkoutGit', function(error, stdout, stderr){
         if (error) {
             console.log(colors.red + "Error while cloning repository" + colors.reset);
             console.log(stderr);
-        } else {
-            callback();
+            process.exit();
         }
-    });
+    }));
 }
 
 function checkOutput(output){
@@ -62,13 +61,13 @@ function checkOutput(output){
     }
 }
 
-function runInstall(askedNamespace){
+function runInstall(askedNamespace, callback){
     var iterator = -1,
         callQueue = [],
         next = function(){
             if (iterator < callQueue.length - 1) {
                 iterator++;
-                callQueue[iterator][0](callQueue[iterator][1], callQueue[iterator][2], callQueue[iterator][3]);
+                callQueue[iterator].shift().apply(this, callQueue[iterator]);
             }
         },
         callNamespace = function(namespace, config, custom) {
@@ -88,37 +87,47 @@ function runInstall(askedNamespace){
     }
 
     for (namespace in config) {
+
         if (typeof askedNamespace === 'string' && namespace !== askedNamespace) {
             continue;
         }
 
-        if (namespaces[namespace] === void(0) && customNamespaces[namespace] === void(0)) {
+        if (void(0) === namespaces[namespace] && void(0) === customNamespaces[namespace]) {
             console.log(colors.white + "Namespace "+ colors.red + namespace + colors.white +" doesn't exists" + colors.reset );
             continue;
         }
 
-        if (namespaces[namespace]) {
+        if (void(0) !== namespaces[namespace]) {
             callQueue.push([callNamespace, namespace, config[namespace], false]);
         }
 
-        if (customNamespaces[namespace]) {
+        if (void(0) !== customNamespaces[namespace]) {
             callQueue.push([callNamespace, namespace, config[namespace], true]);
         }
+    }
+
+    if (void(0) !== callback && typeof callback === "function") {
+        callQueue.push([callback]);
     }
 
     next();
 }
 
-module.exports = function(git, output, namespace) {
-    queue.done('install', function(){
-        if (typeof git === 'string') {
-            checkoutGit(git, runInstall);
-        } else {
-            runInstall(namespace);
-        }
+module.exports = function(git, output, namespace, callback) {
+    queue.done('checkoutGit', function(){
+        runInstall(namespace, callback);
     });
 
-    checkGit(git);
-    queue.add('install', checkOutput)(output);   
+    queue.done('checkConfig', function(){
+        if (typeof git === 'string') {
+            return queue.add('checkoutGit', checkoutGit)(git);
+        }
+        
+        return queue.run('checkoutGit');
+    });
+
+    queue.add('checkConfig', checkConfig)();
+    queue.add('checkConfig', checkOutput)(output);
+    queue.add('checkConfig', checkGit)(git); 
     
 };

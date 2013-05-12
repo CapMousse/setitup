@@ -32,7 +32,7 @@ function createVhost(host, port, root){
     if (fs.existsSync("/etc/apache2/extra") && fs.existsSync("/etc/apache2/extra/httpd-vhosts.conf")) {
         content = fs.readFileSync('/etc/apache2/extra/httpd-vhosts.conf');
 
-        if (content.toString().indexOf(vhost)) {
+        if (content.toString().indexOf(vhost) !== -1) {
             console.log(colors.white + "\tVirtual host already exists" + colors.reset);
             return;
         }

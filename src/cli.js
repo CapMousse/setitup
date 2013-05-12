@@ -13,4 +13,4 @@ cli.addCommand('install', 'Install a setitup project', commands.install)
     .addArgument('-o, --output', 'output for git install')
     .addArgument('-n, --namespace', 'install the asked namespace');
 
-cli.run();
+module.exports = cli;

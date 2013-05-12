@@ -1,4 +1,4 @@
-# Setitup
+# Setitup [![Build Status](https://secure.travis-ci.org/CapMousse/setitup.png?branch=master)](http://travis-ci.org/CapMousse/setitup)
 
 Local environment project setup made easy.
 
