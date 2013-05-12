@@ -1,5 +1,6 @@
 'use strict';
 
 module.exports = {
-    mysql: require('./mysql')
+    mysql: require('./mysql'),
+    sqlite: require('./sqlite')
 };
