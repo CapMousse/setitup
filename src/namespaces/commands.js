@@ -1,32 +1,59 @@
+/*
+ * Clifier
+ * https://github.com/CapMousse/setitup
+ *
+ * Copyright (c) 2013 Jeremy Barbe
+ * Licensed under the WTFPL license.
+ */
+
 'use strict';
 
 var exec = require('child_process').exec;
-var colors = require('../utils/consoleColors');
+var log = require('clifier').helpers.log;
+var stack = require('../utils/stack.js');
 
-module.exports = function(commands, rootDir, next){
-    var loop = 0, len, callQueue = [], iterator = -1, 
-        tick = function(){
-            if (iterator < callQueue.length - 1) {
-                iterator++;
-                callQueue[iterator].shift().apply(this, callQueue[iterator]);
-            }
-        },
-        execCallback = function(command, tick){
-            console.log(colors.green + "    Runing "+command);
-            exec(command, function(err, stdout, stderr){
-                if (void(0) !== err && null !== err) {
-                    console.log(colors.red + "    Error while runing "+command);
-                    console.log("    " + stderr.replace("\n", "\n    "));
-                }
-
-                tick();
-            });
-        };
-
-    for(len = commands.length; loop < len; loop++){
-        callQueue.push([execCallback, commands[loop], tick]);
+function Commands(commands, rootDir, next) {
+    if (void(0) === commands) {
+        throw new Error('commands required');
     }
 
-    callQueue.push([next]);
-    tick();
+    if (void(0) === rootDir) {
+        throw new Error('rootDir required');
+    }
+
+    this.commands = commands;
+    this.rootDir = rootDir;
+    this.next = next || function(){};
+}
+
+Commands.prototype.doctor = function(){
+    this.next();
+    return true;
 };
+
+Commands.prototype.run = function(){
+    var loop = 0;
+    var len = this.commands.length;
+    var execCallback = function(command){
+        log.write(log.style("    Runing "+command, 'green'));
+
+        exec(command, function(err, stdout, stderr){
+            if (void(0) !== err && null !== err) {
+                log.error("    Error while runing "+command);
+                log.error("    " + stderr.replace("\n", "\n    "));
+            }
+
+            stack.tick('commands');
+        });
+    };
+
+
+    for(; loop < len; loop++){
+        stack.addToStack('commands', execCallback, [this.commands[loop]]);
+    }
+
+    stack.addToStack('commands', this.next);
+    stack.tick('commands');
+};
+
+module.exports = Commands;

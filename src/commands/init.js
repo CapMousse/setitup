@@ -1,11 +1,20 @@
+/*
+ * Clifier
+ * https://github.com/CapMousse/setitup
+ *
+ * Copyright (c) 2013 Jeremy Barbe
+ * Licensed under the WTFPL license.
+ */
+
 'use strict';
 
 var fs = require('fs');
 var currentDir = process.cwd();
+var log = require('clifier').helpers.log;
 
-module.exports = function(){
+function Init(){
     if (fs.existsSync(currentDir+'/setitup.config')) {
-        console.log("The file setitup.config already exists");
+        log.error("The file setitup.config already exists");
         return false;
     }
 
@@ -41,4 +50,6 @@ module.exports = function(){
 
     fs.writeFileSync(currentDir+'/setitup.config', fileContent);
     return true;
-};
+}
+
+module.exports = Init;

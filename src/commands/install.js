@@ -1,89 +1,110 @@
+/*
+ * Clifier
+ * https://github.com/CapMousse/setitup
+ *
+ * Copyright (c) 2013 Jeremy Barbe
+ * Licensed under the WTFPL license.
+ */
+
 'use strict';
 
 var fs = require('fs');
-var yaml = require('js-yaml');
 var exec = require('child_process').exec;
-var queue = require('../utils/queue');
-var colors = require('../utils/consoleColors');
+var log = require('clifier').helpers.log;
+var utils = require('../utils');
 var namespaces = require('../namespaces');
 var currentDir = process.cwd();
 
-function checkConfig(){
-    if (fs.existsSync(currentDir+'/setitup.config') === false) {
-        console.log("The setitup.config file doesn't exist");
-        return false;
-    }
+function Install(git, output, namespace, callback) {
+    var _this = this;
 
-    return true;
+    this.git = git;
+    this.output = output;
+    this.namespace = namespace;
+    this.callback = callback;
+
+    utils.queue.done('checkoutGit', function(){
+        _this.runInstall(_this.namespace, _this.callback);
+    });
+
+    utils.queue.done('checkConfig', function(){
+        if (typeof git === 'string') {
+            return utils.queue.add('checkoutGit', _this.checkoutGit)(git);
+        }
+        
+        return utils.queue.run('checkoutGit');
+    });
+
+    utils.queue.add('checkConfig', utils.config.checkConfig)();
+    utils.queue.add('checkConfig', _this.checkOutput)(output);
+    utils.queue.add('checkConfig', _this.checkGit)(git); 
 }
 
-function getConfig(){
-    var configContent = fs.readFileSync(currentDir+'/setitup.config');
-
-    return yaml.load(configContent.toString());
-}
-
-function checkGit(git){
+Install.prototype.checkGit = function(git){
     if (typeof git !== 'string') {
         return;
     }
 
-    console.log(colors.green + "-->" + colors.white + " Checking if git repository exists " + colors.reset);
-    exec('git ls-remote '+git, queue.add('checkConfig', function(error){
+    log.write(log.style("-->", 'green') + log.style(" Checking if git repository exists\n", 'green'));
+    exec('git ls-remote '+git, utils.queue.add('checkConfig', function(error){
         if (error) {
-            console.log(colors.red + "The repository " + colors.white + git + colors.red + " doesn't exists" + colors.reset);
+            log.error("The repository " + git +" doesn't exists\n");
             process.exit();
         }
     }));
-}
+};
 
-function checkoutGit(git){
-    console.log(colors.green + "-->" + colors.white + " Checking out git repository " + colors.reset);
+Install.prototype.checkoutGit = function(git){
+    log.write(log.style("-->", 'green') + log.style(" Checking out git repository\n", 'green'));
 
-    exec('git clone ' + git + ' ' + currentDir, queue.add('checkoutGit', function(error, stdout, stderr){
+    exec('git clone ' + git + ' ' + currentDir, utils.queue.add('checkoutGit', function(error){
         if (error) {
-            console.log(colors.red + "Error while cloning repository" + colors.reset);
-            console.log(stderr);
+            log.error("Error while cloning repository\n");
             process.exit();
         }
     }));
-}
+};
 
-function checkOutput(output){
+Install.prototype.checkOutput = function(output){
     if (typeof output !== "string") {
         return;
     }
 
     if (fs.existsSync(currentDir + "/" + output) === false) {
-        console.log(colors.green + "-->" + colors.white + " Creating dir for git repository " + colors.reset);
+        log.write(log.style("-->", 'green') + log.style(" Creating dir for git repository\n", 'green'));
         fs.mkdirSync(currentDir + "/" + output);
         currentDir  = currentDir + "/" + output;
     }
-}
+};
 
-function runInstall(askedNamespace, callback){
-    var iterator = -1,
-        callQueue = [],
-        next = function(){
-            if (iterator < callQueue.length - 1) {
-                iterator++;
-                callQueue[iterator].shift().apply(this, callQueue[iterator]);
-            }
+Install.prototype.runInstall = function(askedNamespace, callback){
+    var next = function(){
+            utils.stack.tick('install');
         },
         callNamespace = function(namespace, config, custom) {
-            console.log(colors.green + "-->" + colors.white + " Processing " + (custom ? "custom " : "") + namespace + colors.reset);
-            namespaces[namespace](config, currentDir, next);
+            log.write(log.style("-->", 'green') + log.style(" Processing " + (custom ? "custom " : "") + namespace + "\n", 'white'));
+            
+            if (custom) {
+                (new customNamespaces[namespace](config, currentDir, next)).run();
+            } else {
+                (new namespaces[namespace](config, currentDir, next)).run();
+            }
         },
         config, namespace, customNamespaces = [];
 
-    if (checkConfig() === false) {
+    if (utils.config.checkConfig() === false) {
         return;
     }
 
-    config = getConfig();
+    config = utils.config.getConfig();
 
     if (fs.existsSync(currentDir + "/setitup.js") !== false) {
         customNamespaces = require(currentDir + "/setitup.js");
+    }
+
+    if (typeof askedNamespace === 'string' && Object.keys(config).indexOf(askedNamespace) === -1) {
+        log.error("Namespace "+ askedNamespace +" not found in config file");
+        process.exit();
     }
 
     for (namespace in config) {
@@ -93,41 +114,28 @@ function runInstall(askedNamespace, callback){
         }
 
         if (void(0) === namespaces[namespace] && void(0) === customNamespaces[namespace]) {
-            console.log(colors.white + "Namespace "+ colors.red + namespace + colors.white +" doesn't exists" + colors.reset );
+            log.error("Namespace " + namespace + " doesn't exists\n");
             continue;
         }
 
         if (void(0) !== namespaces[namespace]) {
-            callQueue.push([callNamespace, namespace, config[namespace], false]);
+            utils.stack.addToStack('install', callNamespace, [namespace, config[namespace], false]);
         }
 
         if (void(0) !== customNamespaces[namespace]) {
-            callQueue.push([callNamespace, namespace, config[namespace], true]);
+            utils.stack.addToStack('install', callNamespace, [namespace, config[namespace], true]);
         }
     }
 
     if (void(0) !== callback && typeof callback === "function") {
-        callQueue.push([callback]);
+        utils.stack.addToStack('install', callback);
+    } else {
+        utils.stack.addToStack('install', process.exit);
     }
 
-    next();
-}
+    utils.stack.tick('install');
+};
 
-module.exports = function(git, output, namespace, callback) {
-    queue.done('checkoutGit', function(){
-        runInstall(namespace, callback);
-    });
-
-    queue.done('checkConfig', function(){
-        if (typeof git === 'string') {
-            return queue.add('checkoutGit', checkoutGit)(git);
-        }
-        
-        return queue.run('checkoutGit');
-    });
-
-    queue.add('checkConfig', checkConfig)();
-    queue.add('checkConfig', checkOutput)(output);
-    queue.add('checkConfig', checkGit)(git); 
-    
+module.exports = function(git, output, namespace, callback){
+    new Install(git, output, namespace, callback);
 };

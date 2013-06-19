@@ -6,8 +6,6 @@ Local environment project setup made easy.
 
 SetItUp can be easily customised to add your custom namespace and add custom commands.
 
-**Now in beta, feedback is welcome**
-
 ## How to install
 
 Simply run `npm install setitup -g`
@@ -30,15 +28,13 @@ This file contains several namespaces, each one assigned to one part of your set
 
 
 #### Project
-The project namespace contains basic information for your setup: 
-- branch : the branch to use
+The project namespace contains basic information for your setup:
 - host : the virtual host to create
 - root : the root dir for the virtual host
 
 
 ```yaml
 project:
-    branch :  "master"
     host :    "your.host"
     root :    "root/dir "
 ```
@@ -90,6 +86,12 @@ If you don't have clone your git repository to your computer, you can use `setit
 
 If you wan't to install a specific namespace, you can use `setitup install -n namespace`.
 
+### Check environment
+
+You can easily check if your environment can run your project, just by using `setitup doctor`.
+
+As `install`, `doctor` can use the namespace parameter
+
 ## Create custom namespaces
 
 If you want to add a custom namespace, to add custom commands and tools, or if you want to override an existing namespace, simply create a setitup.js on your directory.
@@ -97,15 +99,24 @@ If you want to add a custom namespace, to add custom commands and tools, or if y
 ```javascript
 'use strict';
 
+function YourNamespace (commands, rootDir, next) {
+    this.commands = commands;
+    this.rootDir = rootDir + '/////';
+    this.next = next;
+}
+
+YourNamespace.prototype.install = function(){
+    // do stuff to install
+    next();
+};
+
+YourNamespace.prototype.doctor = function(){
+    // do stuff to check env
+    next();
+};
+
 module.exports = {
-    /**
-     * {Object|Array} commands the list of commands of the current namespace
-     * {String}       rootDir  the root dir of the project
-     * {Function}     a callback to call when namespace work is finished
-     */
-    namespaceName: function(commands, rootDir, next) {
-        next();
-    }
+    yourNamespace: YourNamespace
 }
 ```
 

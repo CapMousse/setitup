@@ -1,26 +1,63 @@
+/*
+ * Clifier
+ * https://github.com/CapMousse/setitup
+ *
+ * Copyright (c) 2013 Jeremy Barbe
+ * Licensed under the WTFPL license.
+ */
+
 'use strict';
 
 var exec = require('child_process').exec;
-var colors = require('../utils/consoleColors');
+var log = require('clifier').helpers.log;
 
-module.exports = function(end, config){
+function Mysql(config, rootDir, end) {
+    this.config = config;
+    this.rootDir = rootDir;
+    this.end = end || function(){};
+}
+
+Mysql.prototype.doctor = function(){
     var command = "mysql";
+    var _this = this;
 
-    command += " -u" + (config.user || 'root');
+    command += " -u" + (this.config.user || 'root');
+    command += " -e \"SHOW DATABASES LIKE '" + this.config.name + "'\"";
 
-    if (config.password !== void(0)) {
-        command += " -p" + config.password;
+    exec(command, function(err, stdout) {
+        if (err || stdout.toString().length === 0) {
+            return _this.end(false);
+        }
+
+        _this.end(true);
+    });
+
+    return true;
+};
+
+Mysql.prototype.run = function(){
+    var command = "mysql";
+    var _this = this;
+
+    command += " -u" + (this.config.user || 'root');
+
+    if (this.config.password !== void(0)) {
+        command += " -p" + this.config.password;
     }
 
-    command += " -e 'CREATE DATABASE IF NOT EXISTS `" + config.name + "` CHARACTER SET = \"" + (config.charset || 'UFT8') +"\"'";
-    console.log(colors.white + "    Creating database " + colors.green + config.name + colors.reset);
+    command += " -e 'CREATE DATABASE IF NOT EXISTS `" + this.config.name + "` CHARACTER SET = \"" + (this.config.charset || 'UFT8') +"\"'";
+    log.write("    Creating database " + log.style(this.config.name, 'bold'));
 
     exec(command, function(err, stdout, stderr) {
         if (err) {
-            console.log(colors.red + "    Error while creating database" + colors.reset);
-            console.log("\t"+stderr);
+            log.error("    Error while creating database");
+            log.write("\t"+stderr);
         }
 
-        end();
+        _this.end();
     });
+
+    return true;
 };
+
+module.exports = Mysql;

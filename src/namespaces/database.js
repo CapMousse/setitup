@@ -1,18 +1,54 @@
+/*
+ * Clifier
+ * https://github.com/CapMousse/setitup
+ *
+ * Copyright (c) 2013 Jeremy Barbe
+ * Licensed under the WTFPL license.
+ */
+
 'use strict';
 
 var drivers = require('../database');
-var colors = require('../utils/consoleColors');
+var log = require('clifier').helpers.log;
 
-module.exports = function(commands, rootDir, next){
-
-    if (commands.driver === void(0) || commands.name === void(0)) {
-        return next();
+function Database(commands, rootDir, next){
+    if (void(0) === commands) {
+        throw new Error('commands required');
     }
 
-    if (drivers[commands.driver] === void(0)) {
-        console.log(colors.red + "     Database driver " + colors.white + commands.driver + colors.red + " doen't exists" + colors.reset);
-        return next();
+    if (void(0) === rootDir) {
+        throw new Error('rootDir required');
     }
 
-    drivers[commands.driver](next, commands);
+    this.commands = commands;
+    this.rootDir = rootDir;
+    this.next = next || function(){};
+}
+
+Database.prototype.getDriver = function() {
+    if (this.commands.driver === void(0) || this.commands.name === void(0)) {
+        return this.next();
+    }
+
+    if (drivers[this.commands.driver] === void(0)) {
+        log.error("     Database driver " + this.commands.driver + " doen't exists");
+        return this.next();
+    }
+
+    return new drivers[this.commands.driver](this.commands, this.rootDir, this.next);
 };
+
+Database.prototype.doctor = function(){
+    var driver = this.getDriver();
+
+    return driver.doctor();
+};
+
+Database.prototype.run = function(){
+    var driver = this.getDriver();
+
+
+    return driver.run();
+};
+
+module.exports = Database;

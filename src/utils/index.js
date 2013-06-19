@@ -9,6 +9,7 @@
 'use strict';
 
 module.exports = {
-    mysql: require('./mysql'),
-    sqlite: require('./sqlite')
+    config: require('./config'),
+    queue: require('./queue'),
+    stack: require('./stack')
 };
