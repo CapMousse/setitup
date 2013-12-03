@@ -1,5 +1,5 @@
 /*
- * Clifier
+ * Setitup
  * https://github.com/CapMousse/setitup
  *
  * Copyright (c) 2013 Jeremy Barbe
@@ -27,6 +27,7 @@ function Commands(commands, rootDir, next) {
 }
 
 Commands.prototype.doctor = function(){
+    log.warning("    Commands can't be \"doctor\"");
     this.next();
     return true;
 };

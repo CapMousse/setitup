@@ -1,5 +1,5 @@
 /*
- * Clifier
+ * Setitup
  * https://github.com/CapMousse/setitup
  *
  * Copyright (c) 2013 Jeremy Barbe
@@ -15,36 +15,34 @@ var currentDir = process.cwd();
 var namespaces = require('../namespaces');
 
 function Doctor(askedNamespace, callback){
-    var iterator = -1,
-        callQueue = [],
-        next = function(){
-            if (iterator < callQueue.length - 1) {
-                iterator++;
-                callQueue[iterator].shift().apply(this, callQueue[iterator]);
-            }
-        },
-        callNamespace = function(namespace, config, custom) {
-            log.write(log.style("-->", 'green') + log.style(" Processing " + (custom ? "custom " : "") + namespace + "\n", 'white'));
+    var config, namespace, customNamespaces = [];
+    var callNamespace = function(namespace, config, custom) {
+        var next = function(){
+            utils.stack.tick('callNamespace');
+        };
 
-            if (custom) {
-                (new customNamespaces[namespace](config, currentDir, next)).doctor();
-            } else {
-                (new namespaces[namespace](config, currentDir, next)).doctor();
-            }
-            
-        },
-        config, namespace, customNamespaces = [];
+        log.write(log.style("-->", 'green') + log.style(" Processing " + (custom ? "custom " : "") + namespace + "\n", 'white'));
 
+        if (custom) {
+            (new customNamespaces[namespace](config, currentDir, next)).doctor();
+        } else {
+            (new namespaces[namespace](config, currentDir, next)).doctor();
+        }
+    };
+
+    //check if a config file is defined
     if (utils.config.checkConfig() === false) {
-        return;
+        process.exit();
     }
 
     config = utils.config.getConfig();
 
+    //check if a custom command file is defined
     if (fs.existsSync(currentDir + "/setitup.js") !== false) {
         customNamespaces = require(currentDir + "/setitup.js");
     }
 
+    //check if the user want to check a specific namespace
     if (typeof askedNamespace === 'string' && Object.keys(config).indexOf(askedNamespace) === -1) {
         log.error("Namespace "+ askedNamespace +" not found in config file");
         process.exit();
@@ -62,21 +60,21 @@ function Doctor(askedNamespace, callback){
         }
 
         if (void(0) !== namespaces[namespace]) {
-            callQueue.push([callNamespace, namespace, config[namespace], false]);
+            utils.stack.addToStack('callNamespace', callNamespace, [namespace, config[namespace], false]);
         }
 
         if (void(0) !== customNamespaces[namespace]) {
-            callQueue.push([callNamespace, namespace, config[namespace], true]);
+            utils.stack.addToStack('callNamespace', callNamespace, [namespace, config[namespace], true]);
         }
     }
 
     if (void(0) !== callback && typeof callback === "function") {
-        callQueue.push([callback]);
+        utils.stack.addToStack('callNamespace', callback);
     } else {
-        callQueue.push([process.exit]);
+        utils.stack.addToStack('callNamespace', process.exit);
     }
 
-    next();
+    utils.stack.tick('callNamespace');
 }
 
 module.exports = function(namespace, callback){

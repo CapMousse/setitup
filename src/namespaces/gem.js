@@ -1,5 +1,5 @@
 /*
- * Clifier
+ * Setitup
  * https://github.com/CapMousse/setitup
  *
  * Copyright (c) 2013 Jeremy Barbe
@@ -50,15 +50,16 @@ Gem.prototype.run = function(){
 
 Gem.prototype.checkGem = function(gem, version) {
     exec('gem list ' + gem +' -i ' + (version ? '-v ' + version : ''), queue.add('gem', function(err, stdout){
-        if (err) {
-            log.error("    Error while listing gems\n");
+        if (err && true !== /^false/.test(stdout)) {
+            console.log(err);
+            log.error("    Error while listing gem ("+gem+")\n");
             return;
         }
 
         if (true === /^true/.test(stdout)) {
             log.write("    Gem " + gem + " already installed\n");
         } else {
-            log.write(log.style("    Gem " + gem + " missing\n", 'green'));
+            log.error("    Gem " + gem + " missing\n");
         }
     }));
 };
@@ -75,7 +76,7 @@ Gem.prototype.installGem = function(gem, version){
         }
 
 
-        log.write(log.style("    Gem " + gem + " installed\n", 'green'));
+        log.write("    Gem " + gem + " installed\n");
     }));
 };
 

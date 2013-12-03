@@ -100,19 +100,19 @@ If you want to add a custom namespace, to add custom commands and tools, or if y
 'use strict';
 
 function YourNamespace (commands, rootDir, next) {
-    this.commands = commands;
-    this.rootDir = rootDir + '/////';
-    this.next = next;
+    this.commands = commands; // list of asked command, package, whatever you want listed on the config file
+    this.rootDir = rootDir;
+    this.next = next; // this must be called at the end of your command
 }
 
 YourNamespace.prototype.install = function(){
     // do stuff to install
-    next();
+    this.next();
 };
 
 YourNamespace.prototype.doctor = function(){
     // do stuff to check env
-    next();
+    this.next();
 };
 
 module.exports = {

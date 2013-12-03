@@ -29,8 +29,8 @@
     },
     "main": "src/cli.js",
     "dependencies": {
-        "clifier": ">=0.0.1",
-        "js-yaml": "~2.0.5"
+        "clifier": "*",
+        "js-yaml": "*"
     },
     "devDependencies": {
         "grunt-contrib-jshint": "~0.1.1",

@@ -1,5 +1,5 @@
 /*
- * Clifier
+ * Setitup
  * https://github.com/CapMousse/setitup
  *
  * Copyright (c) 2013 Jeremy Barbe
