@@ -23,7 +23,7 @@ exports.testCommands = function(test) {
     process.argv = [];
 
     cli.run();
-    test.equal(log[0], '\nsetitup v0.1.0\nLocal environment project setup made easy\n\nUsage : setitup [command] [options]\n\nCommand list : \n    init                Create a new setitup.config file on your project directory\n    install [options]      Install a setitup project\n        -g\ta git url to install\n        -o\toutput for git install\n        -n\tinstall the asked namespace\n    doctor [options]      Check if project can run\n        -n\tinstall the asked namespace\n    help                Show help for setitup\n');
+    test.equal(log[0], '\nsetitup v0.1.1\nLocal environment project setup made easy\n\nUsage : setitup [command] [options]\n\nCommand list : \n    init                Create a new setitup.config file on your project directory\n    install [options]      Install a setitup project\n        -g\ta git url to install\n        -o\toutput directory for git install\n        -n\tinstall the asked namespace\n    doctor [options]      Check if project can run\n        -n\tinstall the asked namespace\n    help                Show help for setitup\n');
 
     log = [];
     cli.run('install');

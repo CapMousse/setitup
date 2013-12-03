@@ -18,7 +18,7 @@ cli.addCommand('init', 'Create a new setitup.config file on your project directo
 
 cli.addCommand('install', 'Install a setitup project', commands.install)
     .addArgument('-g', 'a git url to install')
-    .addArgument('-o', 'output for git install')
+    .addArgument('-o', 'output directory for git install')
     .addArgument('-n', 'install the asked namespace');
 
 cli.addCommand('doctor', 'Check if project can run', commands.doctor)
