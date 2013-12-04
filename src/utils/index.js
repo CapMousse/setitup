@@ -11,5 +11,6 @@
 module.exports = {
     config: require('./config'),
     queue: require('./queue'),
-    stack: require('./stack')
+    stack: require('./stack'),
+    launchCommand: require('./launchCommand')
 };
