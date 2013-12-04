@@ -1,30 +1,50 @@
-# Setitup [![Build Status](https://secure.travis-ci.org/CapMousse/setitup.png?branch=master)](http://travis-ci.org/CapMousse/setitup)
+# Setitup [![Build Status](https://secure.travis-ci.org/CapMousse/setitup.png?branch=master)](http://travis-ci.org/CapMousse/setitup) [![NPM version](https://badge.fury.io/js/setitup.png)](http://badge.fury.io/js/setitup)
 
-Local environment project setup made easy.
+Setitup is an automated tool to rapidly setup a project on a new environment. Don't waste time to clone repository, install package and launch commands, let Setitup do it for you.
 
-**SetItUp** is an automated tool to rapidly setup a project on a new developement environment. Don't waste time to install each package, to install dependencies or to create your database, **SetItUp** will do it for you !.
+Setitup comes with a small footprint and can be easily customised to add your own namespaces.
 
-SetItUp can be easily customised to add your custom namespace and add custom commands.
+## Using Setitup
 
-## How to install
+Setitup can be easily installed by npm by running the command `npm install setitup -g`
 
-Simply run `npm install setitup -g`
+Here is a list of available commands: 
+
+```
+init                                Create a new setitup.config file on your project directory
+install                             Install project from the current directory
+install -g {giturl}                 Install project from a git repository
+install -g {giturl} -o {directory}  Install project from a git repository on the asked directory
+install -n {namespace}              Install the asked namespace
+doctor                              Check if current config is ready for the project
+doctor  -n {namespace}              Check if current config is ready for the project namespace
+help                                Show help for setitup
+```
+
+## Namespace
+
+Namespace are the main feature of Setitup: they provide usefull tools to set up your environment. Install gems and npm package, setup virtual host, create database, run commands...
+
+You can easily create your own namespace to add feature to Setitup!
+
+Here is a list of available namespaces : 
+
+```
+project    setup your virtualhost environment
+database   setup your the database (mysql/sqlite)
+gem        gem dependencies
+npm        npm dependences
+commands   commands to launch to setup your project
+````
+
+**All namespaces are optional.**
+
 
 ## How to use
 
 ### Create a config file
 
 To start, you need to create a config file, named `setitup.config` (using `YAML`), in your project folder. You can use `setitup init` to create a default file for you or create it manually.
-
-This file contains several namespaces, each one assigned to one part of your setup:
-
-- project : your basic project configuration
-- database : your database configuration
-- gem : needed gems
-- npm : needed node packages
-- commands : custom commands to launch
-
-**All namespaces are optional.**
 
 
 #### Project
@@ -75,22 +95,9 @@ The commands namespace will run a set of custom commands when needed.
 commands:
     - "php composer.phar install --dev"
     - "php app/console assets:install"
-    - "php app/console cache:clear"
+    - "brew update node"
 ```
 
-### Setup environment
-
-Now that your project has a `setitup.config`, you can run `setitup install` to launch installation.
-
-If you don't have clone your git repository to your computer, you can use `setitup install -g repos_url_here`. You can even set a custom ouput dir for git clone, using `-o`: `setitup install -g repos_url_here -o a/ouput/dir`.
-
-If you wan't to install a specific namespace, you can use `setitup install -n namespace`.
-
-### Check environment
-
-You can easily check if your environment can run your project, just by using `setitup doctor`.
-
-As `install`, `doctor` can use the namespace parameter
 
 ## Create custom namespaces
 
