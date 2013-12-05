@@ -15,7 +15,7 @@ var currentDir = process.cwd();
 
 module.exports = {
     checkConfig: function(){
-        if (fs.existsSync(currentDir+'/setitup.config') === false) {
+        if (fs.existsSync(currentDir+'/.setitup') === false) {
             log.error("The setitup.config file doesn't exist\n");
             return false;
         }
@@ -24,7 +24,7 @@ module.exports = {
     },
 
     getConfig: function(){
-        var configContent = fs.readFileSync(currentDir+'/setitup.config');
+        var configContent = fs.readFileSync(currentDir+'/.setitup');
 
         return yaml.load(configContent.toString());
     }

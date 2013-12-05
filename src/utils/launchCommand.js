@@ -5,6 +5,7 @@
  * Copyright (c) 2013 Jeremy Barbe
  * Licensed under the WTFPL license.
  */
+'use strict';
 
 var fs = require('fs');
 var log = require('clifier').helpers.log;
@@ -14,13 +15,13 @@ var stack = require('./stack');
 var configTool = require('./config');
 var drivers = require('../database');
 
-function LaunchCommand (namespace, command, callback) {
-    var config, namespace, customNamespaces = [];
+function LaunchCommand (askedNamespace, command, callback) {
+    var config, customNamespaces = [];
     var callNamespace = function(namespace, config, custom) {
         var next = function(){
             stack.tick('callNamespace');
         };
-        var loadDrivers = namespace == "database";
+        var loadDrivers = namespace === "database";
 
         log.write(log.style("-->", 'green') + log.style(" Processing " + (custom ? "custom " : "") + namespace + "\n", 'white'));
 
@@ -54,7 +55,7 @@ function LaunchCommand (namespace, command, callback) {
         process.exit();
     }
 
-    for (namespace in config) {
+    for (var namespace in config) {
 
         if (typeof askedNamespace === 'string' && namespace !== askedNamespace) {
             continue;
@@ -77,7 +78,7 @@ function LaunchCommand (namespace, command, callback) {
     if (void(0) !== callback && typeof callback === "function") {
         stack.addToStack('callNamespace', callback);
     } else {
-        stack.addToStack('callNamespace', process.exit);
+        stack.addToStack('callNamespace', process.exit, [1]);
     }
 
     stack.tick('callNamespace');

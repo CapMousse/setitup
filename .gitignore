@@ -1,5 +1,4 @@
 node_modules/
 tests/
-setitup.config
 .DS_Store
 npm-debug.log

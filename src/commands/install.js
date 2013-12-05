@@ -12,7 +12,6 @@ var fs = require('fs');
 var exec = require('child_process').exec;
 var log = require('clifier').helpers.log;
 var utils = require('../utils');
-var namespaces = require('../namespaces');
 var currentDir = process.cwd();
 
 function Install(git, output, namespace, callback) {

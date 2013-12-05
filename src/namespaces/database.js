@@ -28,7 +28,7 @@ function Database(commands, rootDir, drivers, next){
 Database.prototype.getDriver = function() {
     if (this.commands.driver === void(0) || this.commands.name === void(0)) {
         return this.next();
-    };
+    }
 
     if (this.drivers[this.commands.driver] === void(0)) {
         log.error("     Database driver " + this.commands.driver + " doen't exists\n");
@@ -43,7 +43,7 @@ Database.prototype.doctor = function(){
     var driver = this.getDriver();
 
     if (!driver) {
-        return
+        return;
     }
 
     if (!driver.doctor) {
@@ -58,7 +58,7 @@ Database.prototype.run = function(){
     var driver = this.getDriver();
 
     if (!driver) {
-        return
+        return;
     }
     
     if (!driver.install) {

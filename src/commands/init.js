@@ -13,7 +13,7 @@ var currentDir = process.cwd();
 var log = require('clifier').helpers.log;
 
 function Init(){
-    if (fs.existsSync(currentDir+'/setitup.config')) {
+    if (fs.existsSync(currentDir+'/.setitup')) {
         log.error("The file setitup.config already exists");
         return false;
     }
@@ -48,7 +48,7 @@ function Init(){
         "    - \"php app/console assets:install\"\r\n" +
         "    - \"php app/console cache:clear\"\r\n";
 
-    fs.writeFileSync(currentDir+'/setitup.config', fileContent);
+    fs.writeFileSync(currentDir+'/.setitup', fileContent);
     return true;
 }
 
